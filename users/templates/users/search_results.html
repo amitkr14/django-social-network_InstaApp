@@ -1,0 +1,46 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto mt-10 px-4 mb-20">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+        Search Results for <span class="text-indigo-600">"{{ query }}"</span>
+    </h2>
+
+    <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        {% if results %}
+            <div class="divide-y divide-gray-100">
+                {% for target_user in results %}
+                
+                    <a href="{% url 'public_profile' target_user.username %}" class="flex items-center px-6 py-4 hover:bg-gray-50 transition cursor-pointer">
+                        
+                        {% if target_user.profile.photo %}
+                            <img class="h-12 w-12 rounded-full object-cover border border-gray-100" src="{{ target_user.profile.photo.url }}" alt="">
+                        {% else %}
+                            <img class="h-12 w-12 rounded-full object-cover border border-gray-100 bg-gray-100 p-2" src="{% static 'users/images/social.png' %}" alt="">
+                        {% endif %}
+                        
+                        <div class="ml-4 flex-1">
+                            <p class="font-bold text-gray-900">{{ target_user.username }}</p>
+                            <p class="text-sm text-gray-500">{{ target_user.first_name }} {{ target_user.last_name }}</p>
+                        </div>
+                        
+                        <div class="text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </a>
+                    
+                {% endfor %}
+            </div>
+            
+        {% else %}
+            <div class="text-center py-12">
+                <p class="text-gray-500 mb-2">No users found matching "{{ query }}".</p>
+                <p class="text-sm text-gray-400">Try searching for a different username.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

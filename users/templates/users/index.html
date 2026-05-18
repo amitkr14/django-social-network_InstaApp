@@ -1,0 +1,71 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto mt-10 px-4">
+    
+    <div class="flex flex-col md:flex-row items-center border-b pb-10 mb-10">
+        
+        <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-gray-100 shadow-sm">
+            {% if profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="Profile Picture" class="w-full h-full object-cover">
+            {% else %}
+                <img src="{% static 'users/images/instaapp.png' %}" alt="Default Profile" class="w-full h-full object-cover bg-gray-100 p-4">
+            {% endif %}
+        </div>
+
+        <div class="md:ml-10 mt-6 md:mt-0 flex-1 text-center md:text-left">
+            <div class="flex flex-col md:flex-row items-center md:space-x-4 mb-4">
+                <h2 class="text-3xl font-light text-gray-800 mb-2 md:mb-0">{{ request.user.username }}</h2>
+                <a href="{% url 'edit' %}" class="px-4 py-1.5 bg-gray-100 text-gray-800 font-semibold rounded text-sm border hover:bg-gray-200 transition">Edit Profile</a>
+            </div>
+            
+            <div class="flex justify-center md:justify-start space-x-6 mb-4 text-gray-700">
+                <p><span class="font-bold text-gray-900">{{ posts.count }}</span> posts</p>
+                <p><span class="font-bold text-gray-900">0</span> followers</p>
+                <p><span class="font-bold text-gray-900">0</span> following</p>
+            </div>
+            
+            <div>
+                <p class="font-bold text-gray-900">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-1 md:gap-4 mb-10">
+        {% for post in posts %}
+            <div class="group relative block aspect-square overflow-hidden bg-gray-100">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition duration-300 flex flex-col items-center justify-center">
+                    
+                    <div class="text-white opacity-0 group-hover:opacity-100 font-bold text-lg flex space-x-6 drop-shadow-md">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" /></svg>
+                            <span>{{ post.liked_by.count }}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7z" clip-rule="evenodd" /></svg>
+                            <span>{{ post.comment_set.count }}</span> 
+                        </div>
+                    </div>
+
+                    <div class="text-white opacity-0 group-hover:opacity-100 flex space-x-3 mt-4 z-10">
+                        <a href="{% url 'edit_post' post.id %}" class="bg-white/20 hover:bg-white/40 border border-white/50 backdrop-blur-sm text-white text-sm px-4 py-1.5 rounded transition">Edit</a>
+                        
+                        <form method="post" action="{% url 'delete_post' post.id %}" class="m-0 p-0" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-500/80 hover:bg-red-600 border border-red-400/50 backdrop-blur-sm text-white text-sm px-4 py-1.5 rounded transition cursor-pointer">Delete</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-span-3 text-center text-gray-500 py-16">
+                <p class="text-2xl font-light mb-4">No posts yet</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

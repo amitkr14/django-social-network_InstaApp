@@ -1,0 +1,51 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto mt-10 px-4 mb-20">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Notifications</h2>
+
+    <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <div class="divide-y divide-gray-100">
+            {% for notification in notifications %}
+                <div class="flex items-center px-6 py-4 {% if not notification.is_seen %}bg-indigo-50/30{% endif %}">
+                    
+                    <a href="{% url 'public_profile' notification.sender.username %}">
+                        {% if notification.sender.profile.photo %}
+                            <img class="h-10 w-10 rounded-full object-cover border border-gray-100" src="{{ notification.sender.profile.photo.url }}" alt="">
+                        {% else %}
+                            <img class="h-10 w-10 rounded-full object-cover bg-gray-100 p-1" src="{% static 'users/images/social.png' %}" alt="">
+                        {% endif %}
+                    </a>
+
+                    <div class="ml-4 flex-1">
+                        <p class="text-sm text-gray-900">
+                            <a href="{% url 'public_profile' notification.sender.username %}" class="font-bold hover:underline">{{ notification.sender.username }}</a>
+                            
+                            {% if notification.notification_type == 1 %}
+                                liked your photo.
+                            {% elif notification.notification_type == 2 %}
+                                commented: <span class="text-gray-600 italic">"{{ notification.text_preview }}"</span>
+                            {% elif notification.notification_type == 3 %}
+                                started following you.
+                            {% endif %}
+                        </p>
+                        <p class="text-xs text-gray-500 mt-0.5">{{ notification.date|timesince }} ago</p>
+                    </div>
+
+                    {% if notification.post %}
+                        <a href="{% url 'public_profile' request.user.username %}" class="ml-4 flex-shrink-0">
+                            <img class="h-12 w-12 object-cover rounded" src="{{ notification.post.image.url }}" alt="Post">
+                        </a>
+                    {% endif %}
+                    
+                </div>
+            {% empty %}
+                <div class="text-center py-12">
+                    <p class="text-gray-500">You have no new notifications.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% load static %}
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'users/styles.css' %}">
+        <link rel="stylesheet" href="{% static 'users/style.css' %}">
+        <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <nav class="shadow-lg">
+           <div class="px-4 mx-auto">
+             <div class="flex justify-between items-center py-2">
+                
+                <div>
+                    <a class="flex items-center" href="{% url 'feed' %}">
+                        <img class="h-8 w-8 mr-2" src="{% static 'users/images/instaapp.png' %}" alt="">
+                        <span class="font-semibold text-lg text-pink-800 hidden sm:block">Photo App</span>
+                    </a>
+                    <a class="relative text-gray-500 font-semibold hover:text-pink-700 transition flex items-center" href="{% url 'notifications' %}"><span>Alerts</span>
+                        {% if request.user.notifications.filter.is_seen == False %}
+                        {% with unread=request.user.notifications.all %}
+                            <span class="ml-1 bg-red-700 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">New</span>
+                        {% endwith %}
+                        {% endif %}
+                    </a>
+                </div>
+
+                {% if request.user.is_authenticated %}
+                <div class="flex-1 max-w-xs mx-4">
+                    <form method="get" action="{% url 'search' %}" class="m-0 relative">
+                        <input type="text" name="q" placeholder="Search users..." 
+                               class="w-full bg-gray-100 border-none rounded-sm px-4 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-300 transition">
+                        <div class="absolute right-3 top-2 opacity-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+                
+                <div class="space-x-4 flex items-center">
+                    {% if request.user.is_authenticated %}
+                        <a class="text-gray-500 font-semibold hover:text-indigo-600 transition" href="{% url 'feed' %}">Feed</a>
+                        <a class="text-gray-500 font-semibold hover:text-indigo-600 transition" href="{% url 'index' %}">My Profile</a>
+                        <a class="text-gray-500 font-semibold hover:text-indigo-600 transition" href="{% url 'create' %}">Create Post</a>
+                        <a class="text-gray-500 font-semibold hover:text-indigo-600 transition" href="{% url 'edit' %}">Edit Profile</a>
+                        
+                        <form action="{% url 'logout' %}" method="post" class="inline m-0 p-0">
+                            {% csrf_token %}
+                            <button type="submit" class="text-gray-500 font-semibold cursor-pointer hover:text-red-500 transition bg-transparent border-none">
+                                Logout
+                            </button>
+                        </form>
+                    {% else %}
+                        <a class="text-gray-500 font-semibold hover:text-indigo-600 transition" href="{% url 'login' %}">Login</a>
+                        <a class="text-gray-500 font-semibold hover:text-indigo-600 transition" href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </div>
+                
+             </div>
+           </div>
+        </nav>
+        
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>
