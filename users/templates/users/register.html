@@ -2,29 +2,45 @@
 {% block body %}
 <h1 class="text-2xl m-10">👤Register New User</h1>
 <div class="container py-5">
-<form method="POST" class="bg-white shadow-md m-10 w-2/5 rounded px-8 pt-6 pb-8 mb-4">
+<form method="POST" enctype="multipart/form-data" class="bg-white shadow-md m-10 w-2/5 rounded px-8 pt-6 pb-8 mb-4">
     {% csrf_token %}
+    
     <div class="mb-2">
     <label class="block text-gray-700 text-sm font-bold mb-2" for="">Email</label>
     <div class="shadow appearance-none text-gray-700 border rounded py-2 px-3 mr-10">{{ user_form.email }}</div>
     </div>
+    
     <div class="mb-2">
     <label class="block text-gray-700 text-sm font-bold mb-2" for="">Firstname</label>
     <div class="shadow appearance-none text-gray-700 border rounded py-2 px-3 mr-10">{{ user_form.first_name }}</div>
     </div>
+
+    <div class="mb-2">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="">Lastname</label>
+    <div class="shadow appearance-none text-gray-700 border rounded py-2 px-3 mr-10">{{ user_form.last_name }}</div>
+    </div>
+
     <div class="mb-2">
     <label class="block text-gray-700 text-sm font-bold mb-2" for="">Username</label>
     <div class="shadow appearance-none text-gray-700 border rounded py-2 px-3 mr-10">{{ user_form.username }}</div>
     </div>
+
+    <div class="mb-2">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="">Profile Picture</label>
+    <div class="shadow appearance-none text-gray-700 border rounded py-2 px-3 mr-10">{{ profile_form.photo }}</div>
+    </div>
+
     <div class="mb-2">
     <label class="block text-gray-700 text-sm font-bold mb-2" for="">Password</label>
     <div class="shadow appearance-none text-gray-700 border rounded py-2 px-3 mr-10">{{ user_form.password }}</div>
     </div>
+    
     <div class="mb-2">
     <label class="block text-gray-700 text-sm font-bold mb-2" for="">Confirm Password</label>
     <div class="shadow appearance-none text-gray-700 border rounded py-2 px-3 mr-10">{{ user_form.password2 }}</div>
     </div>
-    <button class="text-white bg-pink-700 px-5 py-2 hover:bg-pink-500 rounded-md" type="submit">Register</button>
+    
+    <button class="text-white bg-pink-700 px-5 py-2 hover:bg-pink-500 rounded-md mt-4" type="submit">Register</button>
 
 </form>
 </div>

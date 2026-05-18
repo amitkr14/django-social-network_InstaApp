@@ -35,17 +35,35 @@ def index(request):
     return render(request, 'users/index.html',{'posts':posts,'profile':profile})
 
 def register(request):
-    if request.method=='POST':
+    if request.method == 'POST':
+        # Pass request.POST and request.FILES to capture text and image uploads
         user_form = UserRegisterationForm(request.POST)
-        if user_form.is_valid():
+        profile_form = ProfileEditForm(data=request.POST, files=request.FILES)
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            # Save the user credentials
             new_user = user_form.save(commit=False)
             new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
-            Profile.objects.create(user=new_user)
-            return render(request,'users/register_done.html')
+            
+            # Create the profile record linked to this user
+            profile = Profile.objects.create(user=new_user)
+            
+            # If a registration photo was uploaded, attach it to the profile
+            if profile_form.cleaned_data.get('photo'):
+                profile.photo = profile_form.cleaned_data['photo']
+                profile.save()
+                
+            return render(request, 'users/register_done.html')
     else:
         user_form = UserRegisterationForm()
-    return render(request,'users/register.html',{'user_form':user_form})        
+        profile_form = ProfileEditForm()
+        
+    # Send both forms to your template context
+    return render(request, 'users/register.html', {
+        'user_form': user_form, 
+        'profile_form': profile_form
+    })       
 
 @login_required
 def edit(request):
