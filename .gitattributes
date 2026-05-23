@@ -1,2 +1,9 @@
+# Ignore all frontend files for language statistics
+*.css linguist-vendored
+*.scss linguist-vendored
+*.js linguist-vendored
+*.html linguist-vendored
+
+# Keep the folder-specific ones just in case
 node_modules/** linguist-vendored
 staticfiles/** linguist-vendored
