@@ -2,13 +2,34 @@
 
 A robust, enterprise-grade full-stack social networking application built using Python, Django, and the Django REST Framework (DRF). This project features a highly optimized relational database architecture, dynamic front-end interactions via AJAX, asynchronous-style event tracking for user notifications, a secure token-authenticated API layer, and a live production cloud deployment backed by PostgreSQL.
 
-## 🚀 Live Demo & API Endpoints
+🚀 Live Application
+Live Demo: http://18.60.44.93
+(Note: As this is hosted on a free-tier AWS EC2 instance, please allow a moment for the initial connection).
 
-* **Production URL:** [https://django-social-network-instaapp.onrender.com/](https://django-social-network-instaapp.onrender.com/)
-* **Secure API Feed:** `https://django-social-network-instaapp.onrender.com/posts/api/posts/`
-* **Token Authentication Gateway:** `https://django-social-network-instaapp.onrender.com/posts/api/token-auth/`
+🏗️ Infrastructure & Deployment Architecture
+This application is deployed on bare-metal cloud infrastructure using a fully containerized, multi-service architecture to ensure production-grade security and scalability.
 
-*Note: Hosted on a free Render instance; the application may require a 50-second cold-start window if it has been temporarily spun down due to inactivity.*
+Cloud Provider: AWS EC2 (Ubuntu Linux)
+
+Containerization: Docker & Docker Compose
+
+Web Server / Reverse Proxy: Nginx
+
+WSGI HTTP Server: Gunicorn
+
+Backend Framework: Django (Python)
+
+Database: PostgreSQL
+
+Architecture Flow:
+
+Client Requests hit the AWS EC2 public IP.
+
+Nginx intercepts the traffic on Port 80, serves static files (CSS/JS) directly for high performance, and acts as a secure reverse proxy.
+
+Gunicorn receives dynamic requests from Nginx and translates them for the Python environment.
+
+Django processes the business logic and queries the isolated PostgreSQL database container via a secure internal Docker network.
 
 ---
 
