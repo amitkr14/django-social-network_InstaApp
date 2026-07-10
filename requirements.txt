@@ -12,3 +12,5 @@ psycopg2-binary
 sqlparse
 tzdata
 whitenoise
+boto3
+django-ses
