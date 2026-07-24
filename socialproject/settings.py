@@ -164,3 +164,9 @@ AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_SES_REGION_NAME = 'us-east-1' 
 AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
 DEFAULT_FROM_EMAIL = 'amitbju4@gmail.com'
+
+
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

@@ -8,6 +8,7 @@ from .forms import ProfileEditForm,UserEditForm
 from posts.models import Post
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from .tasks import send_welcome_email_task
 
 def user_login(request):
     if request.method == "POST":
@@ -33,37 +34,41 @@ def index(request):
     posts = Post.objects.filter(user=current_user)
     profile = Profile.objects.filter(user=current_user).first()
     return render(request, 'users/index.html',{'posts':posts,'profile':profile})
-
 def register(request):
     if request.method == 'POST':
-        # Pass request.POST and request.FILES to capture text and image uploads
+        # Pass request.POST and request.FILES to capture text and image uploads[cite: 1]
         user_form = UserRegisterationForm(request.POST)
         profile_form = ProfileEditForm(data=request.POST, files=request.FILES)
         
         if user_form.is_valid() and profile_form.is_valid():
-            # Save the user credentials
+            # Save the user credentials[cite: 1]
             new_user = user_form.save(commit=False)
             new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
             
-            # Create the profile record linked to this user
+            # Create the profile record linked to this user[cite: 1]
             profile = Profile.objects.create(user=new_user)
             
-            # If a registration photo was uploaded, attach it to the profile
+            # If a registration photo was uploaded, attach it to the profile[cite: 1]
             if profile_form.cleaned_data.get('photo'):
                 profile.photo = profile_form.cleaned_data['photo']
                 profile.save()
+            
+            # --- ASYNC CELERY TASK INJECTION ---
+            # Hand the email dispatch to the background worker
+            if new_user.email:
+                send_welcome_email_task.delay(new_user.email)
                 
             return render(request, 'users/register_done.html')
     else:
         user_form = UserRegisterationForm()
         profile_form = ProfileEditForm()
         
-    # Send both forms to your template context
+    # Send both forms to your template context[cite: 1]
     return render(request, 'users/register.html', {
         'user_form': user_form, 
         'profile_form': profile_form
-    })       
+    })
 
 @login_required
 def edit(request):
