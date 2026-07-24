@@ -36,23 +36,24 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
-volumes:
-  postgres_data:
-  static_volume:
-  media_volume:
+  volumes:
+    postgres_data:
+    static_volume:
+    media_volume:
 
-redis:
+  redis:
     image: redis:alpine
     ports:
       - "6379:6379"
 
-celery:
-  build: .
-  command: celery -A socialproject worker -l info
-  volumes:
-    - .:/app
-  env_file:
-    - .env
-  depends_on:
-    - db
-    - redis
+  celery:
+    build: .
+    command: celery -A socialproject worker -l info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis  
+
