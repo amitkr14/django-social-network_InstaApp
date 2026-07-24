@@ -36,10 +36,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
-volumes:
-  postgres_data:
-  static_volume:
-  media_volume:
 
   redis:
     image: redis:alpine
@@ -57,3 +53,7 @@ volumes:
       - db
       - redis  
 
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
