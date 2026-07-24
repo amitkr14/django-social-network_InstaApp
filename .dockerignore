@@ -1,0 +1,19 @@
+# Ignore local virtual environments
+env/
+venv/
+
+# Ignore Node modules
+node_modules/
+
+# Ignore user uploads and local databases (Volumes handle these)
+media/
+db.sqlite3
+
+# Ignore Git history
+.git/
+.gitignore
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
