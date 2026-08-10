@@ -46,7 +46,7 @@ graph TD
 
     Celery -->|Dispatches Email| AWSSES([AWS SES])
     GitHubCI([GitHub Actions]) -.->|Automated Deployment| AWS EC2 Instance
-    ```
+```
 ---
 
 ## 🛠️ Technical Architecture & Core Features
