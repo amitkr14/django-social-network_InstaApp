@@ -1,0 +1,25 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # This triggers the action whenever you push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Execute Remote SSH Commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # These are the exact commands GitHub will run on your server!
+            cd django-social-network_InstaApp
+            git pull origin main
+            sudo docker compose up -d --build
