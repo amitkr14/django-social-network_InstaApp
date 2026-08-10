@@ -33,10 +33,10 @@ Django processes the business logic and queries the isolated PostgreSQL database
 
 ```mermaid
 graph TD
-    Client([Client Browser]) -->|HTTP Request| Nginx
+    Client([Client Browser]) -->|HTTP Request| Proxy[Nginx Reverse Proxy]
 
-    subgraph AWS EC2 Instance [Dockerized Environment]
-        Nginx[Nginx Reverse Proxy] -->|Proxies to| Gunicorn[Gunicorn WSGI]
+    subgraph EC2 [AWS EC2 Instance - Dockerized Environment]
+        Proxy -->|Proxies to| Gunicorn[Gunicorn WSGI]
         Gunicorn -->|Executes| Django[Django Backend]
         
         Django <-->|Read / Write| Postgres[(PostgreSQL)]
@@ -45,8 +45,8 @@ graph TD
     end
 
     Celery -->|Dispatches Email| AWSSES([AWS SES])
-    GitHubCI([GitHub Actions]) -.->|Automated Deployment| AWS EC2 Instance
-```
+    GitHubCI([GitHub Actions]) -.->|Automated Deployment| EC2
+```    
 ---
 
 ## 🛠️ Technical Architecture & Core Features
