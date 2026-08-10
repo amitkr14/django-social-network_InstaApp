@@ -31,6 +31,22 @@ Gunicorn receives dynamic requests from Nginx and translates them for the Python
 
 Django processes the business logic and queries the isolated PostgreSQL database container via a secure internal Docker network.
 
+```mermaid
+graph TD
+    Client([Client Browser]) -->|HTTP Request| Nginx
+
+    subgraph AWS EC2 Instance [Dockerized Environment]
+        Nginx[Nginx Reverse Proxy] -->|Proxies to| Gunicorn[Gunicorn WSGI]
+        Gunicorn -->|Executes| Django[Django Backend]
+        
+        Django <-->|Read / Write| Postgres[(PostgreSQL)]
+        Django -->|Queues Task| Redis[(Redis Broker)]
+        Redis -->|Pulls Task| Celery[Celery Worker]
+    end
+
+    Celery -->|Dispatches Email| AWSSES([AWS SES])
+    GitHubCI([GitHub Actions]) -.->|Automated Deployment| AWS EC2 Instance
+    ```
 ---
 
 ## 🛠️ Technical Architecture & Core Features
@@ -53,27 +69,30 @@ Django processes the business logic and queries the isolated PostgreSQL database
 * **Postman Verified:** Thoroughly validated through multi-stage API integration tests verifying response states (`200 OK`, `401 Unauthorized`, `405 Method Not Allowed`).
 
 ### 4. Cloud DevOps & Production Pipeline
-* **Database Modernization:** Migrated local storage setups effortlessly from developer SQLite engines to an enterprise-grade cloud **PostgreSQL** instance.
-* **Static Asset Management:** Implemented **WhiteNoise** middleware configuration to compress and safely distribute system CSS/JS assets directly inside container environments.
-* **Continuous Deployment (CI/CD):** Configured specialized shell configurations (`build.sh`) to automatically pull updates, manage packages (`requirements.txt`), execute production migrations, and initialize **Gunicorn WSGI** web worker servers automatically upon git pushes to Render.
+* **Asynchronous Task Queue:** Integrated **Celery** backed by a **Redis** message broker to handle non-blocking background processes, such as processing secure user registration emails via AWS SES.
+* **Container Orchestration:** Fully dockerized the application environment using **Docker** and **Docker Compose**, ensuring seamless orchestration of the Django web server, PostgreSQL database, Redis instance, and Celery workers.
+* **Continuous Deployment (CI/CD):** Engineered an automated deployment pipeline using **GitHub Actions**. Upon merging to the `main` branch, the CI/CD workflow securely executes SSH commands on the **AWS EC2** bare-metal server to pull the latest code and rebuild containers without manual intervention.
+* **Static Asset Management:** Implemented **WhiteNoise** middleware to compress and securely distribute system CSS/JS assets directly inside the Nginx and Gunicorn container environment.
 
 ---
 
-## 🧰 Tech Stack
+##  Tech Stack
 
 | Component | Technology |
 | :--- | :--- |
 | **Backend Framework** | Python 3.12+ / Django 5.x |
 | **API Architecture** | Django REST Framework (DRF) |
-| **Database** | PostgreSQL (Production) / SQLite (Local Testing) |
-| **WSGI HTTP Server** | Gunicorn |
-| **Static Asset Management** | WhiteNoise Middleware |
+| **Database** | PostgreSQL (Production) / SQLite (Local) |
+| **Asynchronous Tasks** | Celery & Redis (Message Broker) |
+| **Web Server / Proxy** | Gunicorn & Nginx |
+| **Containerization** | Docker & Docker Compose |
+| **CI/CD & DevOps** | GitHub Actions |
 | **Frontend Layout** | Tailwind CSS / HTML5 / JavaScript (AJAX / jQuery) |
-| **Deployment Cloud** | Render Cloud Platform |
+| **Deployment Cloud** | AWS EC2 (Ubuntu Linux) |
 
 ---
 
-## 💾 Database Schema Overview
+##  Database Schema Overview
 
 The application architecture utilizes optimized entity relations to scale data operations:
 
